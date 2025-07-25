@@ -1,6 +1,7 @@
 package com.example.jetpaccomposeapp.page
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.jetpaccomposeapp.R
 import com.example.jetpaccomposeapp.component.BannerBerita
 import com.example.jetpaccomposeapp.component.BannerCard
 import com.example.jetpaccomposeapp.component.BeritaContent
@@ -65,10 +67,11 @@ class EdukasiDetailActivity : ComponentActivity() {
         Log.d("Berita", "Isi Berita ${berita.toString()}")
         setContent {
             JetpacComposeAppTheme {
-                Scaffold (modifier = Modifier
-                    .fillMaxSize(),
+                Scaffold (modifier = Modifier,
                     topBar = { }) { innerPadding ->
-                    LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                    LazyColumn(modifier = Modifier
+                        .background(color = ColorBg)
+                        .padding(innerPadding)) {
                         item {
                             JudulDetail(berita = berita)
                         }
@@ -85,6 +88,7 @@ class EdukasiDetailActivity : ComponentActivity() {
 
 @Composable
 fun ButtonBack(navigasiKeBeranda: () -> Unit) {
+    val context = LocalContext.current
     Row (horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
         .padding(horizontal = 4.dp)
@@ -94,10 +98,13 @@ fun ButtonBack(navigasiKeBeranda: () -> Unit) {
                 .clickable { navigasiKeBeranda() }
                 .size(30.dp),
             tint = Color.White,)
-        Icon(imageVector = Icons.Outlined.FavoriteBorder, contentDescription = "tombol favorit",
+        Image(painter = painterResource(id = R.drawable.baseline_link_24), contentDescription = "Link Website",
             modifier = Modifier
-                .size(30.dp),
-            tint = Color.White,)
+                .clickable {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://financial-tracker-capstone.vercel.app/blogs"))
+                    context.startActivity(intent)
+                }
+                .size(30.dp))
     }
 }
 

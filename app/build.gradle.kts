@@ -40,6 +40,7 @@ android {
 }
 
     val SplashScreen = "androidx.core:core-splashscreen:1.0.0"
+    val material3Update = "androidx.compose.material3:material3:1.2.1"
 
 dependencies {
     implementation(SplashScreen)
@@ -50,7 +51,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(material3Update)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

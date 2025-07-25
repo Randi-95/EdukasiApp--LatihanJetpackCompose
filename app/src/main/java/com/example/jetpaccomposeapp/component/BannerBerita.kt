@@ -133,5 +133,3 @@ fun IkonSlice(modifier: Modifier = Modifier) {
 private fun prevIcon() {
     IkonSlice()
 }
-
-

@@ -1,49 +1,54 @@
 package com.example.jetpaccomposeapp.page
 
 import BottomNavigationBar
-import android.content.ClipData.Item
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.jetpaccomposeapp.R
 import com.example.jetpaccomposeapp.component.BannerBerita
 import com.example.jetpaccomposeapp.component.BeritaContent
-import com.example.jetpaccomposeapp.component.CardBerita
 import com.example.jetpaccomposeapp.component.IkonSlice
 import com.example.jetpaccomposeapp.component.JudulEdukasiSection
-import com.example.jetpaccomposeapp.component.M3SearchBarDemo
 import com.example.jetpaccomposeapp.component.TopBarComponent
 import com.example.jetpaccomposeapp.model.BeritaModel
 import com.example.jetpaccomposeapp.model.getData
@@ -69,9 +74,7 @@ class HomeActivity : ComponentActivity() {
                     .fillMaxSize(),
                     topBar = { TopAppBar(
                        title = {
-                           Image(painter = painterResource(id = R.drawable.logo_app), contentDescription = "logo",
-                               modifier = Modifier
-                                   .height(32.dp))
+                           TopBarComponent()
                        },
                         colors = TopAppBarColors(containerColor = Color.Black, scrolledContainerColor = Color.Black, navigationIconContentColor = Color.Black, titleContentColor = Color.Black, actionIconContentColor = Color.Black)
                     ) },
@@ -83,6 +86,7 @@ class HomeActivity : ComponentActivity() {
 
                 ) { innerPadding ->
                     Column(modifier = Modifier
+                        .background(color = ColorBg)
                         .padding(innerPadding)) {
                         when(selectedItemIndex) {
                             0 -> {LazyColumn(modifier = Modifier.background(color = ColorBg)) {
@@ -104,9 +108,35 @@ class HomeActivity : ComponentActivity() {
 
                             }}
                             1 -> {
-                                Text(text = "Cari")
+                                val textState = remember {
+                                    mutableStateOf(TextFieldValue(""))
+                                }
+
+                                Column (modifier = Modifier
+                                    .background(color = ColorBg)
+                                    ) {
+                                    SearchView(state = textState, placeholder = "Cari disini...", modifier = Modifier)
+                                }
+
+                                val searchText = textState.value.text
+
+                                LazyColumn( modifier = Modifier
+                                    .background(color = ColorBg)) {
+                                   items(
+                                       items = berita.filter {
+                                           it.title.contains(searchText, ignoreCase = true)
+                                       },
+                                       key = {it}
+                                   ){ item ->
+                                        EdukasiContent(item)
+                                   }
+                                }
+
+
+
                             }
-                            2 -> {}
+                            2 -> {
+                            }
                             3 -> {}
                         }
                     }
@@ -114,6 +144,49 @@ class HomeActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@Composable
+fun SearchView(
+    modifier: Modifier = Modifier,
+    state: MutableState<TextFieldValue>,
+    placeholder: String
+) {
+    TextField(
+        value = state.value,
+        onValueChange = {value ->
+            state.value = value
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clip(RoundedCornerShape(30.dp))
+            .border(1.dp, Color.White, RoundedCornerShape(30.dp)),
+        leadingIcon = {
+            Icon(imageVector = Icons.Filled.Search, contentDescription = "ikon cari")
+                      },
+        trailingIcon = {
+            if (state.value.text.isNotEmpty()) {
+                IconButton(onClick = {state.value = TextFieldValue("") }) {
+                    Icon(imageVector = Icons.Filled.Clear, contentDescription = "ikon clear")
+                }
+            }
+        },
+        placeholder = {
+            Text(text = placeholder)
+        },
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = ColorBg,
+            focusedIndicatorColor = ColorBg,
+            unfocusedContainerColor = ColorBg,
+            disabledContainerColor = ColorBg
+        ),
+        textStyle = TextStyle(
+            color = Color.White
+        ),
+        maxLines = 1,
+        singleLine = true,
+    )
 }
 
 @Composable
